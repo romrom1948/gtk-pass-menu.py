@@ -63,8 +63,8 @@ class PassGrid(Gtk.FlowBox):
 	def __init__(self):
 		Gtk.FlowBox.__init__(self)
 		self.set_max_children_per_line(3)
-		self.set_min_children_per_line(3)
 		self.set_selection_mode(Gtk.SelectionMode.SINGLE)
+		self.set_activate_on_single_click(True)
 		self.entries = []
 
 	def update(self, entries):
@@ -98,24 +98,29 @@ class PassStoreWindow(Gtk.Window):
 		self.set_decorated(False)
 		self.set_type_hint(Gdk.WindowTypeHint.POPUP_MENU)
 		self.set_border_width(5)
-		self.set_default_size(800,100)
+		self.set_default_size(800,500)
 
-		self.content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=50)
-		self.add(self.content)
+		content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=50)
+		self.add(content)
 		self.connect("key_press_event", self.on_key_pressed)
 
-		self.controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=5)
+		controls = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=5)
 		self.filter = Gtk.Entry()
 		self.filter.connect("changed", self.on_text_entered)
-		self.filter.connect("activate", self.on_entry_activated)
-		self.controls.pack_start(self.filter, True, True, 0)
+		controls.pack_start(self.filter, True, True, 0)
 
 		self.grid = PassGrid()
+		self.grid.connect("child-activated", self.on_entry_activated)
+
+		scrolled = Gtk.ScrolledWindow()
+		scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+		scrolled.set_propagate_natural_height(True)
+		scrolled.add(self.grid)
 
 		self.update()
 
-		self.content.pack_start(self.controls, False, False, 0)
-		self.content.pack_start(self.grid, False, False, 0)
+		content.pack_start(controls, False, False, 0)
+		content.pack_start(scrolled, False, False, 0)
 
 	def on_key_pressed(self, widget, event):
 		key = Gdk.keyval_name(event.keyval)
@@ -143,7 +148,7 @@ class PassStoreWindow(Gtk.Window):
 								 if text.upper() in e.name.upper()]
 		self.update()
 
-	def on_entry_activated(self, widget):
+	def on_entry_activated(self, widget, child):
 		self.access_selected_entry()
 
 	def access_selected_entry(self):
