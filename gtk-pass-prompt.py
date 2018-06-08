@@ -77,7 +77,7 @@ class PassGrid(Gtk.FlowBox):
 			self.add(label)
 			self.entries.append(e)
 
-		if len(self.entries) == 2:
+		if len(self.entries) == 2 and self.entries[0].name == '..':
 			first = self.get_child_at_index(1)
 		else:
 			first = self.get_child_at_index(0)
