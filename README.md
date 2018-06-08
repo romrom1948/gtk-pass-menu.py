@@ -1,4 +1,4 @@
-# gtk-pass-menu.py
+# gtk-pass-prompt.py
 
 A simple GTK prompt for [pass](https://www.passwordstore.org/), intended for use with gnome-shell.
 
